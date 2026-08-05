@@ -1,0 +1,32 @@
+name: Core
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Build and test RelayOS.Core
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore Core tests
+        run: dotnet restore tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj
+
+      - name: Build Core tests
+        run: dotnet build tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj --configuration Release --no-restore
+
+      - name: Run Core tests
+        run: dotnet test tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj --configuration Release --no-build

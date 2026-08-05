@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RelayOS.Demo.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,32" Spacing="18">
+            <Label
+                Text="RelayOS"
+                FontSize="38"
+                FontAttributes="Bold"
+                TextColor="#512BD4"
+                SemanticProperties.HeadingLevel="Level1" />
+
+            <Label
+                Text="Store · Carry · Forward"
+                FontSize="20"
+                FontAttributes="Bold"
+                SemanticProperties.HeadingLevel="Level2" />
+
+            <Label
+                Text="This demo simulates nearby contacts in memory. It does not use Bluetooth, Wi-Fi Direct, or a mesh radio."
+                FontSize="15" />
+
+            <Border Stroke="#D0C4F6" StrokeThickness="1" Padding="16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Route" FontAttributes="Bold" />
+                    <Label Text="Alice → Courier (offline storage) → Bob" />
+                    <Label Text="The courier carries ciphertext and cannot decrypt it." FontSize="13" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Entry
+                x:Name="MessageEntry"
+                Text="Medical kit reached checkpoint 7"
+                Placeholder="Message for Bob"
+                ClearButtonVisibility="WhileEditing" />
+
+            <Button
+                x:Name="RunDemoButton"
+                Text="Run encrypted relay demo"
+                Clicked="OnRunDemoClicked"
+                HorizontalOptions="Fill" />
+
+            <ActivityIndicator
+                x:Name="BusyIndicator"
+                IsRunning="False"
+                IsVisible="False" />
+
+            <Label
+                Text="Event log"
+                FontAttributes="Bold"
+                SemanticProperties.HeadingLevel="Level2" />
+
+            <Label
+                x:Name="EventLogLabel"
+                Text="Ready."
+                FontFamily="monospace"
+                FontSize="13"
+                LineBreakMode="WordWrap" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
