@@ -4,6 +4,18 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Authors>Rufat Asadzade</Authors>
+    <Company>RelayOS</Company>
+    <Description>Experimental .NET foundation for encrypted, delay-tolerant message relay.</Description>
+    <RepositoryUrl>https://github.com/rufatixx/RelayOS</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/rufatixx/RelayOS</PackageProjectUrl>
+    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright (c) 2026 Rufat Asadzade and RelayOS contributors.</Copyright>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 
 </Project>

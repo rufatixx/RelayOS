@@ -1,8 +1,28 @@
 # RelayOS
 
-RelayOS is an experimental .NET 10 library for encrypted, delay-tolerant message relay. A node writes an encrypted packet to a local queue, gives copies to peers it can currently reach, and another node can carry the packet until it encounters the recipient.
+[![Core](https://github.com/rufatixx/RelayOS/actions/workflows/core.yml/badge.svg)](https://github.com/rufatixx/RelayOS/actions/workflows/core.yml)
+[![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-blue.svg)](LICENSE)
+[![Status: MVP](https://img.shields.io/badge/status-MVP-orange.svg)](#status-and-safety)
+
+RelayOS is an experimental .NET 10 foundation for encrypted, delay-tolerant message relay: a way for data to move through nearby carriers even when there is no normal network path.
+
+The project is built around a simple idea: a node writes an encrypted packet to a local queue, hands copies to peers it can currently reach, and another node can carry the packet until it encounters the recipient. Relays see routing metadata, not the protected payload.
 
 This repository is an MVP. Its transport is an in-process simulator: **there is no Bluetooth transport, Wi-Fi Direct transport, mesh networking, background discovery, production routing, or delivery-receipt protocol.**
+
+## Why it matters
+
+Most communication software assumes that the internet exists, stays reachable, and stays affordable. RelayOS explores the opposite condition: devices that meet briefly, carry data forward, and sync opportunistically.
+
+The long-term direction is an open, inspectable protocol for offline-first communication experiments, disaster-resilient coordination, field research, campus/local communities, and privacy-conscious apps that need more than a cloud queue. The current code is intentionally small, testable, and honest about what is not done yet.
+
+## Project principles
+
+- Security claims must be earned by tests, review, and clear threat models.
+- The simulator must never be marketed as real radio networking.
+- Public APIs should stay boring, predictable, and hard to misuse.
+- RelayOS should be useful to builders without letting copycats impersonate the official project.
+- Contributors get visible credit for meaningful work.
 
 ## What works
 
@@ -216,6 +236,28 @@ Roadmap items are intentions, not current features.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and the additional review expected for protocol or cryptography changes.
 
+Good first areas for contributors:
+
+- deterministic tests for hostile packet and queue inputs
+- protocol notes, diagrams, and threat-model review
+- Android lifecycle research for a future real-device transport
+- sample apps that clearly label simulated behavior
+- documentation fixes that make the MVP limits easier to understand
+
+## Recognition and project identity
+
+RelayOS is led by [Rufat Asadzade](https://github.com/rufatixx). The project welcomes forks and contributions under the license, but the `RelayOS` name and identity are reserved for the official project and approved community use.
+
+If you build on this code, preserve the license and notices, make your source available when required by AGPL-3.0, and do not present your fork, app, package, account, or service as the official RelayOS project unless you have written permission.
+
+See [NOTICE](NOTICE) and [TRADEMARKS.md](TRADEMARKS.md).
+
+## Security
+
+Please do not open public issues for sensitive vulnerabilities. See [SECURITY.md](SECURITY.md) for the reporting process.
+
 ## License
 
-RelayOS is available under the [MIT License](LICENSE).
+RelayOS source code is available under the [GNU Affero General Public License v3.0 only](LICENSE).
+
+The RelayOS name, logo, marks, and project identity are not included in that license. See [TRADEMARKS.md](TRADEMARKS.md).
