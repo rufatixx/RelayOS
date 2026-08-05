@@ -70,4 +70,5 @@ Use temporary directories for storage tests and ensure they are cleaned up. Keep
 
 Use concise, imperative commit messages. In the pull request description, include what changed, how it was tested, and any remaining limitations. Never include credentials, exported private keys, user data, generated build output, or device-specific signing files.
 
-By contributing, you agree that your contribution is licensed under the repository's MIT License.
+By contributing, you agree that your contribution is licensed under the
+repository's GNU Affero General Public License v3.0 only (AGPL-3.0-only).

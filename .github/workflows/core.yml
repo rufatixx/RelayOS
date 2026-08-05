@@ -30,3 +30,19 @@ jobs:
 
       - name: Run Core tests
         run: dotnet test tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj --configuration Release --no-build
+
+      - name: Run the console simulation
+        run: dotnet run --project samples/RelayOS.Simulator/RelayOS.Simulator.csproj --configuration Release -- "CI relay proof"
+
+      - name: Audit NuGet dependencies
+        run: dotnet list tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj package --vulnerable --include-transitive
+
+      - name: Pack the Core alpha
+        run: dotnet pack src/RelayOS.Core/RelayOS.Core.csproj --configuration Release --no-restore --output artifacts
+
+      - name: Upload the NuGet package
+        uses: actions/upload-artifact@v4
+        with:
+          name: RelayOS.Core
+          path: artifacts/*.nupkg
+          if-no-files-found: error

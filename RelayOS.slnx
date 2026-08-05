@@ -3,6 +3,9 @@
     <Project Path="src/RelayOS.Core/RelayOS.Core.csproj" />
     <Project Path="src/RelayOS.Demo/RelayOS.Demo.csproj" />
   </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/RelayOS.Simulator/RelayOS.Simulator.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj" />
   </Folder>

@@ -1,14 +1,34 @@
-# RelayOS
+<p align="center">
+  <img src="docs/assets/relayos-social-preview.svg" alt="RelayOS — encrypted store, carry, forward relay experiments" width="100%" />
+</p>
 
-[![Core](https://github.com/rufatixx/RelayOS/actions/workflows/core.yml/badge.svg)](https://github.com/rufatixx/RelayOS/actions/workflows/core.yml)
-[![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-blue.svg)](LICENSE)
-[![Status: MVP](https://img.shields.io/badge/status-MVP-orange.svg)](#status-and-safety)
+<p align="center">
+  <strong>Encrypted store-carry-forward SDK for .NET 10.</strong><br />
+  Durable queues, recipient-key payload encryption, and a three-node in-process simulator.
+</p>
 
-RelayOS is an experimental .NET 10 foundation for encrypted, delay-tolerant message relay: a way for data to move through nearby carriers even when there is no normal network path.
+<p align="center">
+  <a href="https://github.com/rufatixx/RelayOS/actions/workflows/core.yml"><img alt="Core CI" src="https://github.com/rufatixx/RelayOS/actions/workflows/core.yml/badge.svg" /></a>
+  <a href="https://github.com/rufatixx/RelayOS/releases"><img alt="Release" src="https://img.shields.io/github/v/release/rufatixx/RelayOS?include_prereleases&amp;sort=semver" /></a>
+  <a href="LICENSE"><img alt="License: AGPL-3.0-only" src="https://img.shields.io/badge/license-AGPL--3.0--only-blue.svg" /></a>
+  <img alt=".NET 10" src="https://img.shields.io/badge/.NET-10-512BD4" />
+  <a href="https://github.com/rufatixx/RelayOS/discussions"><img alt="GitHub Discussions" src="https://img.shields.io/github/discussions/rufatixx/RelayOS" /></a>
+</p>
 
-The project is built around a simple idea: a node writes an encrypted packet to a local queue, hands copies to peers it can currently reach, and another node can carry the packet until it encounters the recipient. Relays see routing metadata, not the protected payload.
+<p align="center">
+  <a href="#one-command-demo">Run the 60-second demo</a> ·
+  <a href="#architecture">Explore the architecture</a> ·
+  <a href="https://github.com/rufatixx/RelayOS/issues">Pick an issue</a> ·
+  <a href="https://github.com/rufatixx/RelayOS/discussions">Join the discussion</a>
+</p>
 
-This repository is an MVP. Its transport is an in-process simulator: **there is no Bluetooth transport, Wi-Fi Direct transport, mesh networking, background discovery, production routing, or delivery-receipt protocol.**
+RelayOS explores how a packet can be encrypted for its recipient, stored on a device, carried across a disconnected interval, and forwarded during a later encounter. Relays can inspect the routing metadata required by the MVP, but not the protected payload.
+
+> **Current scope:** Core SDK + in-process network simulator. There is no Bluetooth, Wi-Fi Direct, mesh radio, background discovery, production routing, or delivery-receipt protocol yet.
+
+| Works today | Not implemented yet |
+| --- | --- |
+| Encrypted packets, durable file queues, TTL, priority, deduplication, and simulated Alice → Courier → Bob delivery | Physical device discovery or transport, authenticated sender identity, production routing, receipts, and an audited protocol |
 
 ## Why it matters
 
@@ -16,25 +36,38 @@ Most communication software assumes that the internet exists, stays reachable, a
 
 The long-term direction is an open, inspectable protocol for offline-first communication experiments, disaster-resilient coordination, field research, campus/local communities, and privacy-conscious apps that need more than a cloud queue. The current code is intentionally small, testable, and honest about what is not done yet.
 
-## Project principles
+## One-command demo
 
-- Security claims must be earned by tests, review, and clear threat models.
-- The simulator must never be marketed as real radio networking.
-- Public APIs should stay boring, predictable, and hard to misuse.
-- RelayOS should be useful to builders without letting copycats impersonate the official project.
-- Contributors get visible credit for meaningful work.
+With the .NET 10 SDK installed, run the complete three-node simulation:
+
+```bash
+dotnet run --project samples/RelayOS.Simulator -- "Hello through a disconnected relay"
+```
+
+The command creates Alice, Courier, and Bob in one process. Alice and Bob never connect directly: the courier persists the ciphertext, closes and reopens its queue, and later forwards the packet to Bob.
+
+```text
+ALICE  encrypted and queued a packet for Bob
+HOP 1  Alice → Courier: ciphertext persisted
+CHECK  Courier cannot decrypt the payload ✓
+HOP 2  Courier → Bob: packet forwarded
+BOB    decrypted: “Hello through a disconnected relay”
+```
+
+This is a deterministic local simulation; it does not access device radios or the internet.
 
 ## What works
 
 - `RelayOS.Core`, targeting `net10.0`
-- end-to-end payload encryption using .NET cryptography APIs
+- recipient-key payload encryption using .NET cryptography APIs
 - a file-backed JSON queue with atomic replacement on commit
 - TTL enforcement, four priority levels, and packet-ID deduplication
 - a transport abstraction for future adapters
 - `LocalRelayHub`, which simulates explicit peer encounters in one process
 - a three-node store-carry-forward scenario: Alice → Courier → Bob
+- a one-command console simulator using only the standard .NET SDK
 - Core tests that do not require a MAUI workload
-- a .NET MAUI demo project for showing the local simulation on Android
+- a .NET MAUI Android source demo for visualizing the local simulation
 
 ## Status and safety
 
@@ -178,9 +211,9 @@ Console.WriteLine(text);
 
 The carrier has no recipient private key, so it cannot decrypt Bob's payload. `Connect` and `Disconnect` only change links inside `LocalRelayHub`; they do not interact with physical radios or the network.
 
-## MAUI Android demo
+## MAUI Android source demo
 
-The MAUI project presents the same Alice → Courier → Bob simulation on one device. All three nodes and every simulated link live inside that single app process. It is a visualization of the Core workflow, not a connection among multiple phones.
+The MAUI project presents the same Alice → Courier → Bob simulation on one device. All three nodes and every simulated link live inside that single app process. It is a visualization of the Core workflow, not a connection among multiple phones. The Core CI does not build this project, so treat it as source demo rather than a verified Android release.
 
 Install or restore the Android workload, then build the Android target:
 
@@ -196,6 +229,7 @@ Launch it on an Android emulator or connected device from an IDE with .NET MAUI 
 ```text
 src/RelayOS.Core/          Packet model, cryptography, queue, node, transports
 src/RelayOS.Demo/          .NET MAUI Android demonstration
+samples/RelayOS.Simulator/ One-command standard-SDK console simulation
 tests/RelayOS.Core.Tests/  Core unit and store-carry-forward tests
 .github/workflows/core.yml Core-only continuous integration
 ```
@@ -236,6 +270,8 @@ Roadmap items are intentions, not current features.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and the additional review expected for protocol or cryptography changes.
 
+Start with an issue labelled [`good first issue`](https://github.com/rufatixx/RelayOS/labels/good%20first%20issue), ask design questions in [Discussions](https://github.com/rufatixx/RelayOS/discussions), and review the [Code of Conduct](CODE_OF_CONDUCT.md). Project direction and decision rules are documented in [GOVERNANCE.md](GOVERNANCE.md).
+
 Good first areas for contributors:
 
 - deterministic tests for hostile packet and queue inputs
@@ -246,11 +282,7 @@ Good first areas for contributors:
 
 ## Recognition and project identity
 
-RelayOS is led by [Rufat Asadzade](https://github.com/rufatixx). The project welcomes forks and contributions under the license, but the `RelayOS` name and identity are reserved for the official project and approved community use.
-
-If you build on this code, preserve the license and notices, make your source available when required by AGPL-3.0, and do not present your fork, app, package, account, or service as the official RelayOS project unless you have written permission.
-
-See [NOTICE](NOTICE) and [TRADEMARKS.md](TRADEMARKS.md).
+RelayOS was created and is led by [Rufat Asadzade](https://github.com/rufatixx). Contributors receive visible credit for meaningful work. Forks are welcome under AGPL-3.0; use a distinct name and preserve attribution so users can identify the official project. See [NOTICE](NOTICE) and [TRADEMARKS.md](TRADEMARKS.md).
 
 ## Security
 

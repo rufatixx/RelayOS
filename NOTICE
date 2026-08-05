@@ -12,3 +12,7 @@ the LICENSE file, and all copyright notices required by the AGPL-3.0 license.
 The RelayOS name, logo, marks, repository identity, documentation voice, and
 official social or community presence are not granted for unrestricted reuse.
 See TRADEMARKS.md.
+
+The RelayOS.Demo project includes Open Sans font files. Open Sans is copyright
+The Open Sans Project Authors and is distributed under the SIL Open Font
+License 1.1. See src/RelayOS.Demo/Resources/Fonts/OFL.txt.

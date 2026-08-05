@@ -11,9 +11,9 @@ Please avoid public issues for sensitive security reports.
 
 If you believe you found a vulnerability:
 
-1. Create a private report through GitHub Security Advisories if available.
-2. If private advisories are not available, contact the maintainer through the
-   official GitHub profile and request a private reporting channel.
+1. Open a [private vulnerability report](https://github.com/rufatixx/RelayOS/security/advisories/new).
+2. If GitHub does not allow you to open the form, contact the maintainer through
+   the official GitHub profile and request a private reporting channel.
 3. Include a concise description, affected commit or version, reproduction
    steps, expected impact, and any suggested fix.
 
