@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title description">
+  <title id="title">RelayOS</title>
+  <desc id="description">Encrypted store-carry-forward relay experiments for .NET</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111F" />
+      <stop offset="0.55" stop-color="#0A1D31" />
+      <stop offset="1" stop-color="#10152F" />
+    </linearGradient>
+    <radialGradient id="glow" cx="76%" cy="44%" r="45%">
+      <stop offset="0" stop-color="#315B86" stop-opacity="0.7" />
+      <stop offset="1" stop-color="#07111F" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="relay" x1="770" y1="450" x2="1110" y2="170">
+      <stop stop-color="#57D6FF" />
+      <stop offset="1" stop-color="#7C6CFF" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#9FC8ED" stroke-opacity="0.055" />
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="640" rx="36" fill="url(#background)" />
+  <rect width="1280" height="640" rx="36" fill="url(#glow)" />
+  <rect width="1280" height="640" rx="36" fill="url(#grid)" />
+
+  <g transform="translate(84 94)">
+    <rect width="72" height="72" rx="20" fill="#102C48" stroke="#57D6FF" stroke-opacity="0.45" />
+    <path d="M17 49C24 34 33 25 49 20M25 56C38 51 48 42 56 29" fill="none" stroke="url(#relay)" stroke-width="5" stroke-linecap="round" />
+    <circle cx="16" cy="51" r="6" fill="#07111F" stroke="#57D6FF" stroke-width="4" />
+    <circle cx="36" cy="36" r="8" fill="#07111F" stroke="#68B6FF" stroke-width="4" />
+    <circle cx="57" cy="20" r="6" fill="#07111F" stroke="#7C6CFF" stroke-width="4" />
+  </g>
+
+  <text x="84" y="255" fill="#FFFFFF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="84" font-weight="750" letter-spacing="-3">RelayOS</text>
+  <text x="88" y="319" fill="#91A9C1" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="28" font-weight="500">STORE  ·  CARRY  ·  FORWARD</text>
+  <text x="88" y="386" fill="#D9E8F7" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="29">Encrypted delay-tolerant relay</text>
+  <text x="88" y="426" fill="#D9E8F7" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="29">experiments for .NET 10</text>
+
+  <g transform="translate(88 500)" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="650">
+    <rect width="108" height="40" rx="20" fill="#132F4A" stroke="#315B7D" />
+    <text x="54" y="26" text-anchor="middle" fill="#9EDFFF">CORE SDK</text>
+    <rect x="124" width="178" height="40" rx="20" fill="#1A2748" stroke="#384D83" />
+    <text x="213" y="26" text-anchor="middle" fill="#B9C8FF">LOCAL SIMULATOR</text>
+    <rect x="318" width="142" height="40" rx="20" fill="#1A2748" stroke="#4F4582" />
+    <text x="389" y="26" text-anchor="middle" fill="#D0C6FF">OPEN SOURCE</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <path d="M756 425C820 287 900 218 1048 170" fill="none" stroke="url(#relay)" stroke-width="18" stroke-linecap="round" opacity="0.72" />
+    <path d="M824 486C936 447 1026 365 1101 244" fill="none" stroke="url(#relay)" stroke-width="18" stroke-linecap="round" opacity="0.72" />
+
+    <g transform="translate(716 402)">
+      <circle cx="0" cy="0" r="48" fill="#0A1727" stroke="#57D6FF" stroke-width="8" />
+      <circle cx="0" cy="0" r="9" fill="#57D6FF" />
+      <text x="0" y="82" text-anchor="middle" fill="#AFC5D9" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19">ALICE</text>
+    </g>
+
+    <g transform="translate(920 306)">
+      <circle cx="0" cy="0" r="68" fill="#0A1727" stroke="#68B6FF" stroke-width="9" />
+      <path d="M-20 -6H20V24H-20Z" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round" />
+      <path d="M-13 -7V-16C-13 -34 13 -34 13 -16V-7" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" />
+      <text x="0" y="108" text-anchor="middle" fill="#C7D8E8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="21" font-weight="650">COURIER</text>
+      <text x="0" y="134" text-anchor="middle" fill="#7F9AB2" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="16">ciphertext only</text>
+    </g>
+
+    <g transform="translate(1124 190)">
+      <circle cx="0" cy="0" r="48" fill="#0A1727" stroke="#7C6CFF" stroke-width="8" />
+      <path d="M-14 0L-3 11L18 -13" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="0" y="82" text-anchor="middle" fill="#AFC5D9" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19">BOB</text>
+    </g>
+  </g>
+
+  <text x="1188" y="592" text-anchor="end" fill="#6F879E" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="16">IN-PROCESS SIMULATION · NO RADIOS YET</text>
+</svg>
