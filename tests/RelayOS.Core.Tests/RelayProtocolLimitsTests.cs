@@ -171,4 +171,145 @@ public sealed class RelayProtocolLimitsTests
 
         Assert.Throws<ArgumentOutOfRangeException>(() => cryptography.Decrypt(recipient, oversized));
     }
+
+    [Fact]
+    public void Decrypt_AcceptsPacketAtMaximumPayloadBytes()
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var payload = new byte[RelayProtocol.MaxPayloadBytes];
+
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, payload, Options(), Clock());
+
+        var plaintext = cryptography.Decrypt(recipient, packet);
+        Assert.Equal(payload.Length, plaintext.Length);
+    }
+
+    [Fact]
+    public void Decrypt_AcceptsPacketAtMaximumNodeIdAndContentType()
+    {
+        var senderId = new string('s', RelayProtocol.MaxNodeIdLength);
+        using var recipient = RelayIdentity.Create(new string('r', RelayProtocol.MaxNodeIdLength));
+        var contentType = new string('c', RelayProtocol.MaxContentTypeLength);
+        var cryptography = new RelayCryptography();
+
+        var packet = cryptography.Encrypt(
+            senderId,
+            recipient.PublicKey,
+            "payload"u8,
+            Options() with { ContentType = contentType },
+            Clock());
+
+        var plaintext = cryptography.Decrypt(recipient, packet);
+        Assert.Equal("payload"u8.ToArray(), plaintext);
+    }
+
+    [Fact]
+    public void Decrypt_AcceptsPacketAtMaximumTimeToLive()
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+
+        var packet = cryptography.Encrypt(
+            "sender",
+            recipient.PublicKey,
+            "payload"u8,
+            Options(RelayProtocol.MaxTimeToLive),
+            Clock());
+
+        var plaintext = cryptography.Decrypt(recipient, packet);
+        Assert.Equal("payload"u8.ToArray(), plaintext);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Decrypt_RejectsPacketWithEmptySenderId(string senderId)
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, "payload"u8, Options(), Clock());
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            cryptography.Decrypt(recipient, packet with { SenderId = senderId }));
+    }
+
+    [Fact]
+    public void Decrypt_RejectsPacketWithOversizedSenderId()
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, "payload"u8, Options(), Clock());
+        var oversized = new string('s', RelayProtocol.MaxNodeIdLength + 1);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            cryptography.Decrypt(recipient, packet with { SenderId = oversized }));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Decrypt_RejectsPacketWithEmptyRecipientId(string recipientId)
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, "payload"u8, Options(), Clock());
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            cryptography.Decrypt(recipient, packet with { RecipientId = recipientId }));
+    }
+
+    [Fact]
+    public void Decrypt_RejectsPacketWithOversizedRecipientId()
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, "payload"u8, Options(), Clock());
+        var oversized = new string('r', RelayProtocol.MaxNodeIdLength + 1);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            cryptography.Decrypt(recipient, packet with { RecipientId = oversized }));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Decrypt_RejectsPacketWithEmptyContentType(string contentType)
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, "payload"u8, Options(), Clock());
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            cryptography.Decrypt(recipient, packet with { ContentType = contentType }));
+    }
+
+    [Fact]
+    public void Decrypt_RejectsPacketWithOversizedContentType()
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, "payload"u8, Options(), Clock());
+        var oversized = new string('c', RelayProtocol.MaxContentTypeLength + 1);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            cryptography.Decrypt(recipient, packet with { ContentType = oversized }));
+    }
+
+    [Fact]
+    public void Decrypt_RejectsPacketWithZeroAndOversizedTtl()
+    {
+        using var recipient = RelayIdentity.Create("recipient");
+        var cryptography = new RelayCryptography();
+        var packet = cryptography.Encrypt("sender", recipient.PublicKey, "payload"u8, Options(), Clock());
+
+        var zeroTtl = packet with { ExpiresAtUtc = packet.CreatedAtUtc };
+        var oversizedTtl = packet with
+        {
+            ExpiresAtUtc = packet.CreatedAtUtc + RelayProtocol.MaxTimeToLive + TimeSpan.FromSeconds(1)
+        };
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => cryptography.Decrypt(recipient, zeroTtl));
+        Assert.Throws<ArgumentOutOfRangeException>(() => cryptography.Decrypt(recipient, oversizedTtl));
+    }
 }
