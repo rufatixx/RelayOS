@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Watch a field note move through RelayOS's local store-carry-forward simulator.">
+  <title>RelayOS · Delivery Lab</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="masthead"><a href="/" class="brand">RelayOS <span>/ Delivery Lab</span></a><span class="pill">LOCAL SIMULATION</span></header>
+    <section class="intro">
+      <p class="eyebrow">ONE NOTE. TWO ENCOUNTERS. NO DIRECT LINK.</p>
+      <h1>Delivery can wait.<br><span>The note stays queued.</span></h1>
+      <p class="lede">A field station has a reading for a research desk. They never meet directly. Let a courier pick up the encrypted note, carry it through a disconnected interval, and deliver it later.</p>
+      <p class="scope">All three nodes run on this computer, in one process. No real radios, phone mesh, or operating system. Experimental SDK, not an audited communications service.</p>
+    </section>
+
+    <div id="error" class="error" role="alert" hidden></div>
+    <section class="lab" aria-labelledby="lab-title">
+      <div class="section-top"><div><p class="eyebrow">FIELD NOTE DELIVERY</p><h2 id="lab-title">Watch the queues, not a promise.</h2></div><div class="status" id="status" aria-live="polite">Connecting…</div></div>
+      <div class="topology" aria-label="Simulated delivery route">
+        <article class="node"><span class="node-number">01 / SENDER</span><h3>Field Station</h3><p class="node-description">Creates a note for Research Desk.</p><div class="count"><strong id="station-pending">0</strong> pending</div><span class="node-foot">Encrypted file queue</span></article>
+        <div class="hop" aria-label="First encounter">→<span>encounter 1</span></div>
+        <article class="node"><span class="node-number">02 / CARRIER</span><h3>Courier</h3><p class="node-description">Carries ciphertext, not the recipient key.</p><div class="count"><strong id="courier-pending">0</strong> pending</div><span class="node-foot" id="courier-proof">Waiting for a pickup</span></article>
+        <div class="hop" aria-label="Later encounter">→<span>encounter 2</span></div>
+        <article class="node destination"><span class="node-number">03 / RECIPIENT</span><h3>Research Desk</h3><p class="node-description">Decrypts its note after a later contact.</p><div class="count"><strong id="desk-delivered">0</strong> delivered records</div><span class="node-foot">No direct Station ↔ Desk link</span></article>
+      </div>
+
+      <div class="workbench">
+        <section class="controls" aria-labelledby="steps-title">
+          <h3 id="steps-title">Try it in four steps</h3>
+          <form id="note-form">
+            <label for="note">1. Write a sample field note</label>
+            <textarea id="note" name="note" rows="3" maxlength="1024" required>Station 04: soil temperature 18.6 °C at 09:00. Sample collected.</textarea>
+            <p id="queued-note" class="hint" hidden>A note was queued for this run. Its plaintext is not returned to the composer on refresh. Follow its packet below, or reset to write a new note.</p>
+            <div class="input-hint"><span>Sample data only. Not secrets.</span><span id="byte-count">0 / 1024 bytes</span></div>
+            <button id="queue" type="submit">Queue encrypted note</button>
+          </form>
+          <div class="step"><div><strong>2. Give Courier a brief contact</strong><p>Only Station and Courier meet. Desk stays disconnected.</p></div><button id="pickup" data-action="pickup" type="button">Pick up note</button></div>
+          <div class="step"><div><strong>3. Reopen Courier’s file queue</strong><p>Check the same packet survives closing its store. Not a process restart.</p></div><button id="reopen" data-action="reopen" type="button">Reopen queue</button></div>
+          <div class="step"><div><strong>4. Let Courier meet Research Desk</strong><p>Station stays disconnected. Read the recipient’s result.</p></div><button id="deliver" data-action="deliver" type="button">Deliver note</button></div>
+        </section>
+
+        <section class="results" aria-labelledby="results-title">
+          <div class="result-top"><h3 id="results-title">Recipient’s view</h3><span class="small-pill" id="delivery-count">0 deliveries</span></div>
+          <p id="recipient-empty" class="empty">Nothing received yet. Queued does not mean delivered.</p>
+          <p id="recipient-message" class="message" hidden></p>
+          <p class="detail" id="delivery-detail">Delivery is observed here at Research Desk, not acknowledged back to Station.</p>
+          <dl class="facts"><div><dt>Courier queue reopens</dt><dd id="reopen-count">0</dd></div><div><dt>Desk duplicates ignored</dt><dd id="duplicate-count">0</dd></div><div><dt>Simulated clock</dt><dd id="clock">—</dd></div><div><dt>Note expires at</dt><dd id="expires">—</dd></div></dl>
+          <p class="hint">The lab clock is frozen until you advance it. Real SDK use normally follows each device’s local UTC clock.</p>
+          <details><summary>Inspect packet ID</summary><p id="packet-id" class="packet">No packet yet.</p><p class="hint">Payload is encrypted in queues; routing metadata is visible. The Courier check exercises the SDK’s recipient-ID guard, not wrong-key authentication. All demo identities live in this process; this is not an independent security audit.</p></details>
+        </section>
+      </div>
+
+      <section class="experiments" aria-labelledby="experiments-title"><div><h3 id="experiments-title">Now test the boundaries</h3><p>Try without a contact, repeat delivery, or expire the note before it arrives.</p></div><div class="experiment-actions"><button id="offline" data-action="offline" class="secondary" type="button">Try with no contact</button><button id="advance" data-action="advance" class="secondary" type="button">Advance clock 61 min</button><button id="reset" data-action="reset" class="secondary" type="button">Reset run</button></div></section>
+      <section class="event-section" aria-labelledby="events-title"><div class="section-top"><h3 id="events-title">What actually happened</h3><button id="refresh" class="text-button" type="button">Refresh state</button></div><ol id="events" aria-live="polite" aria-relevant="additions"></ol></section>
+    </section>
+
+    <footer><p>Built on RelayOS.Core · Real SDK encryption and file queues · Simulated contacts</p><p>Browser reload keeps this server’s run. Reset clears it. Stopping the server discards the demo keys and cleans up its temporary queues on normal shutdown. All tabs share one run.</p><p>Sender authentication, radio transport, acknowledgements, and production hardening are not implemented. Don’t use for emergencies or sensitive data.</p></footer>
+  </main>
+</body>
+</html>

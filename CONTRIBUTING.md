@@ -14,6 +14,17 @@ dotnet test tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj --configuration R
 
 These commands do not require a .NET MAUI workload. To work on the Android demo, also restore the workload required by `src/RelayOS.Demo/RelayOS.Demo.csproj` and use an Android emulator or device.
 
+For the browser Delivery Lab, also run its scenario tests and inspect the local UI:
+
+```bash
+dotnet test tests/RelayOS.DeliveryLab.Tests --configuration Release
+dotnet run --project samples/RelayOS.DeliveryLab
+```
+
+Open http://localhost:5088. Check queue → pickup → reopen → deliver, duplicate retry,
+expiry before delivery, reset, reload, and another tab resetting the shared run.
+The [lab guide](docs/delivery-lab.md) explains the simulated clock and state limits.
+
 ## Proposing a change
 
 1. Open an issue or discussion for a protocol, storage-format, transport-contract, or cryptography change before investing in a large implementation.
