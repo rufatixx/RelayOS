@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <strong>Encrypted store-carry-forward SDK for .NET 10.</strong><br />
-  Durable queues, recipient-key payload encryption, and a three-node in-process simulator.
+  <strong>Prototype encrypted, delayed message delivery in .NET 10.</strong><br />
+  Queue a field note, let a courier carry it, and inspect delivery in the local Delivery Lab.
 </p>
 
 <p align="center">
@@ -16,13 +16,16 @@
 </p>
 
 <p align="center">
-  <a href="#one-command-demo">Run the 60-second demo</a> ·
+  <a href="#try-the-delivery-lab">Open the Delivery Lab</a> ·
+  <a href="#one-command-demo">Run the console demo</a> ·
   <a href="#architecture">Explore the architecture</a> ·
   <a href="https://github.com/rufatixx/RelayOS/issues">Pick an issue</a> ·
   <a href="https://github.com/rufatixx/RelayOS/discussions">Join the discussion</a>
 </p>
 
-RelayOS explores how a packet can be encrypted for its recipient, stored on a device, carried across a disconnected interval, and forwarded during a later encounter. Relays can inspect the routing metadata required by the MVP, but not the protected payload.
+RelayOS is an experimental SDK for .NET developers exploring applications that can wait for a later contact instead of requiring a continuous connection. The **Delivery Lab** makes that workflow visible: a field station queues a note for a research desk, a courier picks it up, and the desk receives it during a separate simulated encounter.
+
+The sample runs the actual Core encryption, file queues, duplicate detection, and expiry logic. Contacts are simulated inside one process. RelayOS is not an operating system, a phone messenger, or a working radio mesh.
 
 > **Current scope:** Core SDK + in-process network simulator. There is no Bluetooth, Wi-Fi Direct, mesh radio, background discovery, production routing, or delivery-receipt protocol yet.
 
@@ -30,11 +33,33 @@ RelayOS explores how a packet can be encrypted for its recipient, stored on a de
 | --- | --- |
 | Encrypted packets, durable file queues, TTL, priority, deduplication, and simulated Alice → Courier → Bob delivery | Physical device discovery or transport, authenticated sender identity, production routing, receipts, and an audited protocol |
 
+## Try the Delivery Lab
+
+Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (`global.json` selects `10.0.201` or a newer patch in that feature band), then:
+
+```bash
+git clone https://github.com/rufatixx/RelayOS.git
+cd RelayOS
+dotnet run --project samples/RelayOS.DeliveryLab
+```
+
+Open **http://localhost:5088** in your browser. No account, MAUI workload, radio hardware, or extra frontend dependencies are needed. The first build may need network access to restore SDK project assets; the running lab uses only localhost, with no CDN or external service calls.
+
+1. **Queue a sample note.** Field Station has one pending packet; Research Desk has received nothing. Try **Try with no contact** to verify that queuing alone does not deliver it.
+2. **Pick up note.** Courier stores the encrypted packet. Research Desk is still disconnected. The lab checks that the SDK rejects Courier as the non-recipient; this is an identity guard, not a wrong-key authentication test.
+3. **Reopen queue.** Courier closes and reopens its file store, then checks the same packet is still pending. This is a queue reopen, not a process or device restart.
+4. **Deliver note.** Courier meets Research Desk in a later simulated contact. The exact note appears in the recipient's view.
+5. **Retry delivery.** The recipient records a duplicate instead of delivering another copy. Station and Courier retain their queued copies because the MVP has no delivery receipts.
+
+To explore expiry, reset, queue a note, pick it up, and **Advance clock 61 min** before delivery. The one-hour packet expires and its queue records disappear. The lab uses a frozen, manually advanced clock so the outcome is reproducible; real SDK use normally follows each device's local UTC clock.
+
+The server listens only on loopback. All tabs share one bounded run (one note, up to 1,024 UTF-8 bytes). Reloading the browser reads the current run; reset clears the demo queues and creates fresh keys. Normal server shutdown removes the temporary queues. A forced termination may leave ciphertext files in your OS temporary directory, but demo keys are not saved. **Use sample data, not secrets.** See [the lab guide](docs/delivery-lab.md) for expected results, troubleshooting, and limits.
+
 ## Why it matters
 
 Most communication software assumes that the internet exists, stays reachable, and stays affordable. RelayOS explores the opposite condition: devices that meet briefly, carry data forward, and sync opportunistically.
 
-The long-term direction is an open, inspectable protocol for offline-first communication experiments, disaster-resilient coordination, field research, campus/local communities, and privacy-conscious apps that need more than a cloud queue. The current code is intentionally small, testable, and honest about what is not done yet.
+The immediate use is a developer learning and prototyping tool: inspect what happens to a harmless field reading when no peer is connected, the carrier reopens its queue, the same packet is forwarded twice, or the note expires before contact. Real device transport and deployment scenarios require further protocol, lifecycle, and security work.
 
 ## One-command demo
 
@@ -66,6 +91,7 @@ This is a deterministic local simulation; it does not access device radios or th
 - `LocalRelayHub`, which simulates explicit peer encounters in one process
 - a three-node store-carry-forward scenario: Alice → Courier → Bob
 - a one-command console simulator using only the standard .NET SDK
+- a localhost browser Delivery Lab with visible queues, separate contacts, duplicate retry, and simulated expiry
 - Core tests that do not require a MAUI workload
 - a .NET MAUI Android source demo for visualizing the local simulation
 
@@ -76,7 +102,7 @@ RelayOS is a technical demonstration, not a production communications system. It
 ## Architecture
 
 ```text
-Application / MAUI demo
+Application / Delivery Lab / MAUI demo
           │
           ▼
       RelayNode ─────────────── RelayIdentity / RelayCryptography
@@ -230,7 +256,9 @@ Launch it on an Android emulator or connected device from an IDE with .NET MAUI 
 src/RelayOS.Core/          Packet model, cryptography, queue, node, transports
 src/RelayOS.Demo/          .NET MAUI Android demonstration
 samples/RelayOS.Simulator/ One-command standard-SDK console simulation
+samples/RelayOS.DeliveryLab/ Localhost interactive field-note simulation
 tests/RelayOS.Core.Tests/  Core unit and store-carry-forward tests
+tests/RelayOS.DeliveryLab.Tests/ Bounded scenario and lifecycle tests
 .github/workflows/core.yml Core-only continuous integration
 ```
 

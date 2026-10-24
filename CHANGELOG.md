@@ -3,6 +3,16 @@
 All notable RelayOS changes are recorded here. The project follows Semantic
 Versioning for releases; the packet protocol has its own version field.
 
+## [Unreleased]
+
+### Added
+
+- Localhost Delivery Lab: an interactive field-note scenario using the actual Core
+  SDK, file queues, two separate simulated contacts, queue reopening, duplicate
+  retry, and a manually advanced clock for expiry.
+- Bounded scenario tests and a step-by-step guide covering reloads, reset,
+  temporary data, and the distinction between simulated contacts and real devices.
+
 ## [0.1.0-alpha.1] - 2026-08-05
 
 ### Added

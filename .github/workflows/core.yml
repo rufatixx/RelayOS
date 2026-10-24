@@ -34,6 +34,18 @@ jobs:
       - name: Run the console simulation
         run: dotnet run --project samples/RelayOS.Simulator/RelayOS.Simulator.csproj --configuration Release -- "CI relay proof"
 
+      - name: Restore Delivery Lab tests
+        run: dotnet restore tests/RelayOS.DeliveryLab.Tests/RelayOS.DeliveryLab.Tests.csproj
+
+      - name: Build Delivery Lab tests
+        run: dotnet build tests/RelayOS.DeliveryLab.Tests/RelayOS.DeliveryLab.Tests.csproj --configuration Release --no-restore
+
+      - name: Run Delivery Lab tests
+        run: dotnet test tests/RelayOS.DeliveryLab.Tests/RelayOS.DeliveryLab.Tests.csproj --configuration Release --no-build
+
+      - name: Smoke test Delivery Lab HTTP boundary
+        run: python3 tests/RelayOS.DeliveryLab.Tests/http_smoke.py
+
       - name: Audit NuGet dependencies
         run: dotnet list tests/RelayOS.Core.Tests/RelayOS.Core.Tests.csproj package --vulnerable --include-transitive
 
